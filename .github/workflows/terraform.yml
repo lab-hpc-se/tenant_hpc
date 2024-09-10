@@ -22,7 +22,6 @@ jobs:
     - name: Configure aws credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        # role-to-assume: arn:aws:iam::316546908052:role/dgb-githubactions  # my account
         role-to-assume: arn:aws:iam::820242934816:role/dgb-github-actions # citi account
         aws-region: us-east-1
 
