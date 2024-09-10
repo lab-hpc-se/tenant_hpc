@@ -1,13 +1,10 @@
-# terraform {
-# }
-
 terraform {
 
-  #   backend "s3" {
-  #     bucket = "state"
-  #     key    = "tenant/hpc"
-  #     region = "us-east-1"
-  #   }
+  backend "s3" {
+    bucket = "lab-hpc-se-state"
+    key    = "tenant/hpc"
+    region = "us-east-1"
+  }
 
   # cloud {
   #   workspaces {
