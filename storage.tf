@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "lab_hpc_se_state" {
 }
 
 resource "aws_s3_bucket" "hpc_1_storage" {
-  bucket = "hpc-1-bucket"
+  bucket = "lab-hpc-se-hpc-1-storage"
 }
 
 # resource "aws_fsx_lustre_file_system" "hpc_1_lustre" {
