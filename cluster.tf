@@ -42,9 +42,9 @@ module "hpc_1_cluster" {
 
       instance_types = ["t3.small"]
 
-      min_size     = 1
+      min_size     = 0
       max_size     = 3
-      desired_size = 2
+      desired_size = 0
     }
 
     two = {
@@ -53,9 +53,9 @@ module "hpc_1_cluster" {
 
       instance_types = ["t3.small"]
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size     = 0
+      max_size     = 3
+      desired_size = 0
     }
   }
 }
