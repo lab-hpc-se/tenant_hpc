@@ -31,11 +31,11 @@ module "fsx_lustre" {
   source  = "terraform-aws-modules/fsx/aws//modules/lustre"
   version = "1.1.1"
 
-  name                            = local.lustre_name
-  deployment_type                 = "PERSISTENT_2"
-  file_system_type_version        = var.filesystem_version
-  kms_key_id                      = module.kms_hpc_key1.key_arn
-  per_unit_storage_throughput     = var.lustre_storage_throughput  #[125,250,500,1000]
+  name                        = local.lustre_name
+  deployment_type             = "PERSISTENT_2"
+  file_system_type_version    = var.filesystem_version
+  kms_key_id                  = module.kms_hpc_key1.key_arn
+  per_unit_storage_throughput = var.lustre_storage_throughput #[125,250,500,1000]
 
   # log_configuration = {
   #   level = "ERROR_ONLY"
@@ -45,10 +45,10 @@ module "fsx_lustre" {
   #   root_squash = "365534:65534"
   # }
 
-  storage_capacity              = var.lustre_storage_capacity
-  storage_type                  = "SSD"
-  subnet_ids                    = length(var.lustre_subnets) !=0 ? var.lustre_subnets : [data.aws_subnets.private_subnets.ids[0]]
-  
+  storage_capacity = var.lustre_storage_capacity
+  storage_type     = "SSD"
+  subnet_ids       = length(var.lustre_subnets) != 0 ? var.lustre_subnets : [data.aws_subnets.private_subnets.ids[0]]
+
 
   # Data Repository Association(s)
   data_repository_associations = {

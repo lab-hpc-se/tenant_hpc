@@ -10,7 +10,7 @@ variable "bucket_name" {
 
 variable "lustre_subnets" {
   description = "Subnets for Lustre FSx"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
@@ -22,11 +22,11 @@ variable "filesystem_version" {
 variable "lustre_storage_capacity" {
   description = "Lustre Storage Capacity"
   type        = number
-  default     = 1200   #in GB
+  default     = 1200 #in GB
 }
 
 variable "lustre_storage_throughput" {
   description = "Lustre Per Unit Storage Throughput"
-  type = number
-  default = 1000  #[125,250,500,1000]
+  type        = number
+  default     = 1000 #[125,250,500,1000]
 }

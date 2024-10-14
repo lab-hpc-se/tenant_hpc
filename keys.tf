@@ -62,12 +62,12 @@
 # }
 
 
-module kms_hpc_key1 {
+module "kms_hpc_key1" {
   source  = "terraform-module/kms/aws"
   version = "2.3.1"
 
-  alias_name              = local.kms_hpc_key1_alias_name
-  description             = "Key to encrypt and decrypt secrets"
+  alias_name  = local.kms_hpc_key1_alias_name
+  description = "Key to encrypt and decrypt secrets"
 
-  tags = tomap({"Environment" = "dev", "created_by" = "terraform"})
+  tags = tomap({ "Environment" = "dev", "created_by" = "terraform" })
 }
