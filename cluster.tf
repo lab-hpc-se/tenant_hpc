@@ -7,9 +7,9 @@
 #   }
 # }
 
-locals {
-  cluster_name = "hpc-1-cluster"
-}
+# locals {
+#   cluster_name = "hpc-1-cluster"
+# }
 
 module "hpc_1_cluster" {
   source  = "terraform-aws-modules/eks/aws"
