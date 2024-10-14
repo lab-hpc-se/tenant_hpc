@@ -54,7 +54,7 @@ module "fsx_lustre" {
   data_repository_associations = {
     example = {
       batch_import_meta_data_on_create = true
-      data_repository_path             = "s3://${aws_s3_bucket.hpc_1_storage.id}" #"s3://lab-hpc-se-hpc-1-storage-test"
+      data_repository_path             = "s3://${aws_s3_bucket.hpc_1_storage.id}"
       delete_data_in_filesystem        = false
       file_system_path                 = "/"
       #imported_file_chunk_size         = 128
