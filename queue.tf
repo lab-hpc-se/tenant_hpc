@@ -29,3 +29,18 @@ resource "aws_mq_broker" "hpc_1_broker" {
     password = "helpme-understand"
   }
 }
+
+
+
+module "sqs" {
+  source  = "terraform-aws-modules/sqs/aws"
+  version = "4.2.1"
+
+  name              = local.sqs_name
+  kms_master_key_id = module.kms_hpc_key1.key_arn
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+
+}
