@@ -47,7 +47,7 @@ module "hpc_1_cluster" {
       desired_size = 0
 
       create_launch_template = false
-      launch_template_name = ""
+      launch_template_name   = ""
 
       pre_bootstrap_user_data = <<-EOT
       #!/bin/bash
