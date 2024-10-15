@@ -45,6 +45,18 @@ module "hpc_1_cluster" {
       min_size     = 0
       max_size     = 3
       desired_size = 0
+
+      #enable_bootstrap_user_data = true
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      # mount Lustre
+      sudo amazon-linux-extras install -y lustre
+      sudo mkdir -p /lustre_fsx
+      echo "fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx lustre defaults,noatime,flock,_netdev,x-systemd.automount,x-systemd.requires=network.service 0 0" >> /etc/fstab
+      sudo mount -t lustre -o relatime,flock fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx
+      sudo chmod 2770 /lustre_fsx
+      EOT
     }
 
     two = {
