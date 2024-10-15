@@ -1,6 +1,6 @@
 region             = "us-east-1"
 bucket_name        = "lab-hpc-se-hpc-1-storage"
 filesystem_version = "2.12"
-pv_name            = "lustr-local-pv-2-12"
-pvc_name           = "lustr-local-pvc-2-12"
+pv_name            = "lustre-local-pv-2-12"
+pvc_name           = "lustre-local-pvc-2-12"
 app_namespace      = "lustre-app"

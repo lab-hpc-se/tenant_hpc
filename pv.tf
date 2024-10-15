@@ -61,6 +61,7 @@ resource "kubernetes_persistent_volume_claim" "lustre_local_pvc" {
         storage = "${var.lustre_storage_capacity}Gi"
       }
     }
-    volume_name = kubernetes_persistent_volume.lustre_local_pv.metadata[0].name
+    volume_name        = kubernetes_persistent_volume.lustre_local_pv.metadata[0].name
+    storage_class_name = ""
   }
 }
