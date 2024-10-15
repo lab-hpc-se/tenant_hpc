@@ -30,3 +30,18 @@ variable "lustre_storage_throughput" {
   type        = number
   default     = 1000 #[125,250,500,1000]
 }
+
+variable "pv_name" {
+  description = "Kubernetes Persistent Volume name"
+  type        = string
+}
+
+variable "pvc_name" {
+  description = "Kubernetes Persistent Volume Claim name"
+  type        = string
+}
+
+variable "app_namespace" {
+  description = "Kubernetes namespace for application"
+  type        = string
+}
