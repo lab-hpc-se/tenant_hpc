@@ -62,6 +62,6 @@ resource "kubernetes_persistent_volume_claim" "lustre_local_pvc" {
       }
     }
     volume_name        = kubernetes_persistent_volume.lustre_local_pv.metadata[0].name
-    storage_class_name = ""
+    storage_class_name = "''"
   }
 }
