@@ -67,7 +67,7 @@ module "hpc_1_cluster" {
     two = {
       name = "hpc-1-group-2"
       labels = {
-        role         = "application"
+        role         = "unused"
         usage        = "workloads"
         capacityType = "ON_DEMAND"
         nodegroup    = "hpc-1-group-2"
