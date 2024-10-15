@@ -37,8 +37,13 @@ module "hpc_1_cluster" {
 
   eks_managed_node_groups = {
     one = {
-      name   = "hpc-1-group-1"
-      labels = {}
+      name = "hpc-1-group-1"
+      labels = {
+        role         = "application"
+        usage        = "workloads"
+        capacityType = "ON_DEMAND"
+        nodegroup    = "hpc-1-group-1"
+      }
 
       instance_types = ["t3.small"]
 
@@ -60,8 +65,13 @@ module "hpc_1_cluster" {
     }
 
     two = {
-      name   = "hpc-1-group-2"
-      labels = {}
+      name = "hpc-1-group-2"
+      labels = {
+        role         = "unused"
+        usage        = "workloads"
+        capacityType = "ON_DEMAND"
+        nodegroup    = "hpc-1-group-2"
+      }
 
       instance_types = ["t3.small"]
 
