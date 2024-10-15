@@ -73,7 +73,7 @@ module "fsx_lustre" {
       cidr_ipv4   = data.aws_vpc.selected.cidr_block
       description = "Allow all traffic from the VPC"
       from_port   = 0
-      to_port     = 0
+      to_port     = 65535
       protocol    = "tcp"
     }
   }
