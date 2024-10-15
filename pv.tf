@@ -11,6 +11,8 @@ resource "kubernetes_namespace" "app_namespace" {
 }
 
 
+# Create PV and PVC using kubectl command in yaml_files/ folder.
+/*
 resource "kubernetes_persistent_volume" "lustre_local_pv" {
   metadata {
     name = var.pv_name
@@ -34,11 +36,11 @@ resource "kubernetes_persistent_volume" "lustre_local_pv" {
       required {
         node_selector_term {
           match_expressions {
-            key      = "Name"
+            key      = "role"
             operator = "In"
             values = [
-              "hpc-1-group-1",
-              "hpc-1-group-2"
+              "application",
+              "application-spot"
             ]
           }
         }
@@ -62,6 +64,7 @@ resource "kubernetes_persistent_volume_claim" "lustre_local_pvc" {
       }
     }
     volume_name        = kubernetes_persistent_volume.lustre_local_pv.metadata[0].name
-    storage_class_name = "\"\""
+    storage_class_name = local.lustre_eks_storageclass
   }
 }
+*/

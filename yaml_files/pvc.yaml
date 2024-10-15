@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: lustre-local-pvc-2-12
+  name: lustre-local-pvc
   namespace: lustre-app
 spec:
   accessModes:
@@ -9,6 +9,6 @@ spec:
   resources:
     requests:
       storage: 1200Gi
-  storageClassName: ''
+  storageClassName: ""
   volumeMode: Filesystem
-  volumeName: lustre-local-pv-2-12
+  volumeName: lustre-local-pv
