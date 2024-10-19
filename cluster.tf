@@ -61,6 +61,12 @@ module "hpc_1_cluster" {
       echo "fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx lustre defaults,noatime,flock,_netdev,x-systemd.automount,x-systemd.requires=network.service 0 0" >> /etc/fstab
       sudo mount -t lustre -o relatime,flock fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx
       sudo chmod 2770 /lustre_fsx
+      #
+      # mount s3
+      curl -fsSL -o https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
+      sudo yum install -y ./mount-s3.rpm
+      sudo mkdir -p /s3_bucket
+      sudo mount-s3 --region us-east-1 lab-hpc-se-hpc-1-s3mount-storage /s3_bucket
       EOT
     }
 
@@ -86,7 +92,7 @@ module "hpc_1_cluster" {
       instance_types  = ["t3.small", "t3a.small"]
       min_size        = 0
       max_size        = 3
-      desired_size    = 1
+      desired_size    = 0
 
       taints = {
         spotInstance = {
@@ -99,7 +105,7 @@ module "hpc_1_cluster" {
       labels = {
         role         = "application-spot"
         usage        = "workloads"
-        capacityType = "ON_DEMAND"
+        capacityType = "SPOT"
         nodegroup    = "hpc-1-group-3-spot"
       }
 
@@ -112,7 +118,13 @@ module "hpc_1_cluster" {
       echo "fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx lustre defaults,noatime,flock,_netdev,x-systemd.automount,x-systemd.requires=network.service 0 0" >> /etc/fstab
       sudo mount -t lustre -o relatime,flock fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx
       sudo chmod 2770 /lustre_fsx
-
+      #
+      ## mount s3
+      curl -fsSL -o https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
+      sudo yum install -y ./mount-s3.rpm
+      sudo mkdir -p /s3_bucket
+      sudo mount-s3 --region us-east-1 lab-hpc-se-hpc-1-s3mount-storage /s3_bucket
+      #
       ## Spot Instance unmount FSx script
       # Create spot-fsx-unmount.sh script
       cat <<- "EOF" > /tmp/spot-fsx-unmount.sh
