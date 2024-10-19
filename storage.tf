@@ -2,8 +2,19 @@ resource "aws_s3_bucket" "lab_hpc_se_state" {
   bucket = "lab-hpc-se-state"
 }
 
+# Storage for S3 CSI Driver
 resource "aws_s3_bucket" "hpc_1_storage" {
   bucket = "lab-hpc-se-hpc-1-storage"
+}
+
+# Storage for Lustre FSx
+resource "aws_s3_bucket" "hpc_1_lustre_storage" {
+  bucket = "lab-hpc-se-hpc-1-lustre-storage"
+}
+
+# Storage for S3 mount
+resource "aws_s3_bucket" "hpc_1_s3mount_storage" {
+  bucket = "lab-hpc-se-hpc-1-s3mount-storage"
 }
 
 # resource "aws_fsx_lustre_file_system" "hpc_1_lustre" {
@@ -54,7 +65,7 @@ module "fsx_lustre" {
   data_repository_associations = {
     example = {
       batch_import_meta_data_on_create = true
-      data_repository_path             = "s3://${aws_s3_bucket.hpc_1_storage.id}"
+      data_repository_path             = "s3://${aws_s3_bucket.hpc_1_lustre_storage.id}"
       delete_data_in_filesystem        = false
       file_system_path                 = "/"
       #imported_file_chunk_size         = 128
