@@ -63,7 +63,7 @@ module "hpc_1_cluster" {
       sudo chmod 2770 /lustre_fsx
       #
       # mount s3
-      curl -fsSL -o https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
+      curl -fsSL -o mount-s3.rpm https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
       sudo yum install -y ./mount-s3.rpm
       sudo mkdir -p /s3_bucket
       sudo mount-s3 --region us-east-1 lab-hpc-se-hpc-1-s3mount-storage /s3_bucket
@@ -120,7 +120,7 @@ module "hpc_1_cluster" {
       sudo chmod 2770 /lustre_fsx
       #
       ## mount s3
-      curl -fsSL -o https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
+      curl -fsSL -o mount-s3.rpm https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
       sudo yum install -y ./mount-s3.rpm
       sudo mkdir -p /s3_bucket
       sudo mount-s3 --region us-east-1 lab-hpc-se-hpc-1-s3mount-storage /s3_bucket
