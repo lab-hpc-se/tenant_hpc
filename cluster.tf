@@ -73,7 +73,7 @@ module "hpc_1_cluster" {
     two = {
       name = "hpc-1-group-2"
       labels = {
-        role         = "unused"
+        role         = "application"
         usage        = "workloads"
         capacityType = "ON_DEMAND"
         nodegroup    = "hpc-1-group-2"
@@ -84,6 +84,23 @@ module "hpc_1_cluster" {
       min_size     = 0
       max_size     = 3
       desired_size = 0
+
+      pre_bootstrap_user_data = <<-EOT
+      #!/bin/bash
+      set -ex
+      # mount Lustre
+      sudo amazon-linux-extras install -y lustre
+      sudo mkdir -p /lustre_fsx
+      echo "fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx lustre defaults,noatime,flock,_netdev,x-systemd.automount,x-systemd.requires=network.service 0 0" >> /etc/fstab
+      sudo mount -t lustre -o relatime,flock fs-07f18b5579b332a37.fsx.us-east-1.amazonaws.com@tcp:/ptq27b4v /lustre_fsx
+      sudo chmod 2770 /lustre_fsx
+      #
+      # mount s3
+      curl -fsSL -o mount-s3.rpm https://s3.amazonaws.com/mountpoint-s3-release/latest/x86_64/mount-s3.rpm
+      sudo yum install -y ./mount-s3.rpm
+      sudo mkdir -p /s3_bucket
+      sudo mount-s3 --region us-east-1 lab-hpc-se-hpc-1-s3mount-storage /s3_bucket
+      EOT
     }
 
     spot_2vcpu_2mem = {
