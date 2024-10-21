@@ -44,12 +44,20 @@ module "hpc_1_cluster" {
         capacityType = "ON_DEMAND"
         nodegroup    = "hpc-1-group-1"
       }
+      taints = {
+        ondemandInstance = {
+          key    = "odInstance"
+          value  = "true"
+          effect = "PREFER_NO_SCHEDULE"
+        }
+      }
 
       instance_types = ["t3.small"]
 
       min_size     = 0
       max_size     = 3
       desired_size = 0
+
 
       #enable_bootstrap_user_data = true
       pre_bootstrap_user_data = <<-EOT
@@ -106,10 +114,11 @@ module "hpc_1_cluster" {
     spot_2vcpu_2mem = {
       node_group_name = "hpc-1-group-3-spot"
       capacity_type   = "SPOT"
-      instance_types  = ["t3.small", "t3a.small"]
-      min_size        = 0
-      max_size        = 3
-      desired_size    = 0
+      #instance_types  = ["t3.small", "t3a.small"]
+      instance_types = ["r5d.24xlarge", "r6i.24xlarge"]
+      min_size       = 0
+      max_size       = 3
+      desired_size   = 0
 
       taints = {
         spotInstance = {

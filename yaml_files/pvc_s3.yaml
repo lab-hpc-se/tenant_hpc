@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: s3-local-pvc
+  namespace: lustre-app
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1200Gi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: s3-local-pv
