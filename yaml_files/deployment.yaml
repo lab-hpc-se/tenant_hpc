@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       app: example-app
-  replicas: 4
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -54,6 +54,9 @@ spec:
           - mountPath: /test_lustre
             name: lustre-local-pv
             readOnly: true
+          # - mountPath: /test_s3
+          #   name: s3-local-pv
+          #   readOnly: true
         command:
           - "/bin/sh"
           - "-c"
@@ -70,6 +73,9 @@ spec:
         - name: lustre-local-pv
           persistentVolumeClaim:
             claimName: lustre-local-pvc
+        # - name: s3-local-pv
+        #   persistentVolumeClaim:
+        #     claimName: s3-local-pvc
       tolerations:
       # - key: "cattle.io/os"
       #   value: "linux"
