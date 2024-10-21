@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       app: example-app
-  replicas: 3
+  replicas: 4
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -43,7 +43,7 @@ spec:
             cpu: "50m"
           limits:
             memory: "256Mi"
-            cpu: "500m"     
+            cpu: "500m"
 #NOTE: comment out `volumeMounts` section for configmap and\or secret guide
         # volumeMounts:
         # - name: secret-volume
@@ -54,6 +54,10 @@ spec:
           - mountPath: /test_lustre
             name: lustre-local-pv
             readOnly: true
+        command:
+          - "/bin/sh"
+          - "-c"
+          - while true; do cat /test_lustre/testfile-lustre11.txt > /dev/null; sleep 1; done
 #NOTE: comment out `volumes` section for configmap and\or secret guide
       # volumes:
       # - name: secret-volume
@@ -67,6 +71,9 @@ spec:
           persistentVolumeClaim:
             claimName: lustre-local-pvc
       tolerations:
-      - key: "cattle.io/os"
-        value: "linux"
-        effect: "NoSchedule" 
+      # - key: "cattle.io/os"
+      #   value: "linux"
+      #   effect: "NoSchedule"
+      - key: "spotInstance"
+        value: "true"
+        effect: "NoSchedule"

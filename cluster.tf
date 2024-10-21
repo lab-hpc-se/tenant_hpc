@@ -44,12 +44,20 @@ module "hpc_1_cluster" {
         capacityType = "ON_DEMAND"
         nodegroup    = "hpc-1-group-1"
       }
+      taints = {
+        spotInstance = {
+          key    = "odInstance"
+          value  = "true"
+          effect = "NO_SCHEDULE"
+        }
+      }
 
       instance_types = ["t3.small"]
 
       min_size     = 0
       max_size     = 3
       desired_size = 0
+
 
       #enable_bootstrap_user_data = true
       pre_bootstrap_user_data = <<-EOT
@@ -115,7 +123,7 @@ module "hpc_1_cluster" {
         spotInstance = {
           key    = "spotInstance"
           value  = "true"
-          effect = "PREFER_NO_SCHEDULE"
+          effect = "NO_SCHEDULE"
         }
       }
 
