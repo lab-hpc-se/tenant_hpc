@@ -289,7 +289,7 @@ module "hpc_1_cluster" {
 
       # Execute the /tmp/spot-fsx-unmount.sh script
       chmod 775 /tmp/spot-fsx-unmount.sh
-      /tmp/spot-fsx-unmount.sh -p /lustre_fsx &
+      /tmp/spot-fsx-unmount.sh -p /lustre_fsx -i "aimvector" &
       disown
 
       EOT
