@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       app: example-app
-  replicas: 2
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -44,6 +44,12 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "500m"
+          # requests:
+          #   memory: "48Mi"
+          #   cpu: "30m"
+          # limits:
+          #   memory: "64Mi"
+          #   cpu: "60m"
 #NOTE: comment out `volumeMounts` section for configmap and\or secret guide
         # volumeMounts:
         # - name: secret-volume
@@ -60,7 +66,7 @@ spec:
         # command:
         #   - "/bin/sh"
         #   - "-c"
-        #   - while true; do cat /test_lustre/testfile-lustre11.txt > /dev/null; sleep 1; done
+        #   - while true; do cat /test_lustre/testfile-lustre1.txt > /dev/null; sleep 1; done
 #NOTE: comment out `volumes` section for configmap and\or secret guide
       # volumes:
       # - name: secret-volume

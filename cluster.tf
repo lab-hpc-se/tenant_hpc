@@ -156,45 +156,52 @@ module "hpc_1_cluster" {
       cat <<- "EOF" > /tmp/spot-fsx-unmount.sh
       #!/bin/bash
 
-      ###################################################################
+      #######################################################################################
       # Script to check if there are connections to Lustre FSx mount
+      # by checking if there are any application containers still running in the node.
       # If there are no connections, then unmount FSx.
       # Script version: 1.0
       # Date creation: Oct 16, 2024
       # Feature:
       #   - Only support one Lustre FSx mount.
-      ###################################################################
+      # Usage:
+      #   ./unmount-lustre-spot-termination.sh -p <fsx_mount_path> -i <container_image_name>
+      # Example: ./unmount-lustre-spot-termination.sh -p /lustre_fsx -i my-container-image
+      #######################################################################################
 
       # Timestamp when this script was being executed.
       SCRIPT_TIMESTAMP=$(date +"%s")
       LOG_MSG="[$0]:"
 
       # Check and validate the script parameter arguments
-      while getopts p: flag
+      while getopts p:i: flag
       do
-          case "$${flag}" in
+          case "${flag}" in
               p) # FSx Mount Path
-                fsx_mount_path=$${OPTARG};;
+                fsx_mount_path=${OPTARG};;
+              i) # Container Image Name
+                container_image_name=${OPTARG};;
             \?) # Invalid flag
                 logger "$LOG_MSG Error: Invalid argument options."
-                logger "$LOG_MSG Valid argument options are '$0 -p <fsx_mount_path>'"
+                logger "$LOG_MSG Valid argument options are '$0 -p <fsx_mount_path> -i <container_image_name>'"
                 exit 1;;
           esac
       done
 
       shift "$(( OPTIND - 1 ))"
-      if [[ -z "$fsx_mount_path" ]]; then
-          logger "$LOG_MSG Error: Invalid argument options. Missing -p argument."
-          logger "$LOG_MSG Valid argument options are '$0 -p <fsx_mount_path>'"
+      if [[ -z "$fsx_mount_path" ]] || [[ -z "$container_image_name" ]]; then
+          logger "$LOG_MSG Error: Invalid argument options. Missing -p or -i arguments."
+          logger "$LOG_MSG Valid argument options are '$0 -p <fsx_mount_path> -i <container_image_name>'"
           exit 1
       fi
 
 
-      # Specify the FSx mount point from the script parameter argument
+      # Specify the FSx mount point and container image name from the script parameter arguments
       FSXPATH=$fsx_mount_path
+      IMAGENAME=$container_image_name
 
       # Timestamp when this script was being executed.
-      logger "$LOG_MSG This script was executed at $(date -d @$SCRIPT_TIMESTAMP) to check Lustre FSx mount '$FSXPATH'"
+      logger "$LOG_MSG This script was executed at $(date -d @$SCRIPT_TIMESTAMP) to check container image '$IMAGENAME' accessing Lustre FSx mount '$FSXPATH'"
 
       # Verify if the given fsx_mount_path argument is a valid linux mount in /etc/mtab
       if [[ "$(cat /etc/mtab | grep -w $FSXPATH | wc -l)" -eq 0 ]]; then
@@ -214,7 +221,7 @@ module "hpc_1_cluster" {
       while sleep 5
       do
 
-          HTTP_CODE=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s -w %%{http_code} -o /dev/null http://169.254.169.254/latest/meta-data/spot/instance-action)
+          HTTP_CODE=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s -w %{http_code} -o /dev/null http://169.254.169.254/latest/meta-data/spot/instance-action)
 
           if [[ "$HTTP_CODE" -eq 401 ]] ; then
               # Refreshing Authentication Token
@@ -236,27 +243,22 @@ module "hpc_1_cluster" {
           fi
 
           logger "$LOG_MSG Received Spot Instance interruption notice at $(date -d @$SPOT_INTERRUPTION_TIMESTAMP)" # TODO: Change this to the timestamp of the notification signal from curl output
-          logger "$LOG_MSG Spot Instance is getting terminated. Clean and unmount '$FSXPATH' ..."
+          logger "$LOG_MSG Spot Instance is getting terminated. Unmounting '$FSXPATH' ..."
           curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/spot/instance-action
           echo
 
-          # Check if there are any active connections to Lustre FSx mount
-          PROCESSES_USING_LUSTRE=$(fuser -Mm "$${FSXPATH}")
-          NUMBER_PROCESSES_USING_LUSTRE=$(echo $PROCESSES_USING_LUSTRE | wc -w)
-          if [[ "$NUMBER_PROCESSES_USING_LUSTRE" -eq 0 ]] ; then
-              # No processes are accessing Lustre mount
-              logger "$LOG_MSG No processes are accessing Lustre FSx mount at $(date)"
+          # Check if there are any containers still running accessing Lustre FSx mount
+          NUMBER_CONTAINERS_USING_LUSTRE=$(ctr -n k8s.io containers list | grep -i "${IMAGENAME}" | wc -l)
+
+          if [[ "$NUMBER_CONTAINERS_USING_LUSTRE" -eq 0 ]] ; then
+              # No containers are accessing Lustre mount
+              logger "$LOG_MSG No containers are accessing Lustre FSx mount at $(date)"
           else
-              # Write log entry to indicate which processes are still accessing Lustre mount
-              logger "$LOG_MSG There are $NUMBER_PROCESSES_USING_LUSTRE processes still accessing Lustre FSx mount at $(date)"
-              logger "$LOG_MSG Those process Ids are: $PROCESSES_USING_LUSTRE"
+              # Write log entry to indicate which containers are still accessing Lustre mount
+              logger "$LOG_MSG There are $NUMBER_CONTAINERS_USING_LUSTRE containers still accessing Lustre FSx mount at $(date)"
               continue
           fi
 
-          # # Kill every process still accessing Lustre filesystem. Do we need this??
-          # logger "Kill every process still accessing Lustre filesystem at $(date)"
-          # fuser -kMm -TERM "$${FSXPATH}"; sleep 2
-          # fuser -kMm -KILL "$${FSXPATH}"; sleep 2
 
           # Unmount FSx For Lustre filesystem
           if [[ -f "/tmp/lustre_unmount_$SCRIPT_TIMESTAMP" ]] ; then
@@ -269,10 +271,8 @@ module "hpc_1_cluster" {
           fi
 
           logger "$LOG_MSG Unmounting Lustre FSx filesystem $FSXPATH STARTED at $(date -d @$LUSTRE_UNMOUNT_TIMESTAMP)"
-          if ! umount -c "$${FSXPATH}"; then
+          if ! umount -c "${FSXPATH}"; then
               logger "$LOG_MSG Error unmounting '$FSXPATH' at $(date)"
-              #PROCESSES_FROM_LSOF=$(lsof "$${FSXPATH}")  ### lsof is NOT installed by default
-              #logger "$LOG_MSG Processes still accessing Lustre FSx mount: $PROCESSES_FROM_LSOF"  ### lsof is NOT installed by default
 
               logger "$LOG_MSG Retrying..."
               continue
@@ -281,9 +281,10 @@ module "hpc_1_cluster" {
           # Start a graceful shutdown of the host
           logger "$LOG_MSG Unmounting Lustre FSx filesystem $FSXPATH COMPLETED at $(date)"
           logger "$LOG_MSG Shutting down spot instance at $(date)"
-          shutdown now
+          #shutdown now
 
       done
+
       EOF
 
       # Execute the /tmp/spot-fsx-unmount.sh script
