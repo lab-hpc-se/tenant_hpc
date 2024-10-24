@@ -176,11 +176,11 @@ module "hpc_1_cluster" {
       # Check and validate the script parameter arguments
       while getopts p:i: flag
       do
-          case "${flag}" in
+          case "$${flag}" in
               p) # FSx Mount Path
-                fsx_mount_path=${OPTARG};;
+                fsx_mount_path=$${OPTARG};;
               i) # Container Image Name
-                container_image_name=${OPTARG};;
+                container_image_name=$${OPTARG};;
             \?) # Invalid flag
                 logger "$LOG_MSG Error: Invalid argument options."
                 logger "$LOG_MSG Valid argument options are '$0 -p <fsx_mount_path> -i <container_image_name>'"
@@ -221,7 +221,7 @@ module "hpc_1_cluster" {
       while sleep 5
       do
 
-          HTTP_CODE=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s -w %{http_code} -o /dev/null http://169.254.169.254/latest/meta-data/spot/instance-action)
+          HTTP_CODE=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s -w %%{http_code} -o /dev/null http://169.254.169.254/latest/meta-data/spot/instance-action)
 
           if [[ "$HTTP_CODE" -eq 401 ]] ; then
               # Refreshing Authentication Token
@@ -248,7 +248,7 @@ module "hpc_1_cluster" {
           echo
 
           # Check if there are any containers still running accessing Lustre FSx mount
-          NUMBER_CONTAINERS_USING_LUSTRE=$(ctr -n k8s.io containers list | grep -i "${IMAGENAME}" | wc -l)
+          NUMBER_CONTAINERS_USING_LUSTRE=$(ctr -n k8s.io containers list | grep -i "$${IMAGENAME}" | wc -l)
 
           if [[ "$NUMBER_CONTAINERS_USING_LUSTRE" -eq 0 ]] ; then
               # No containers are accessing Lustre mount
@@ -271,7 +271,7 @@ module "hpc_1_cluster" {
           fi
 
           logger "$LOG_MSG Unmounting Lustre FSx filesystem $FSXPATH STARTED at $(date -d @$LUSTRE_UNMOUNT_TIMESTAMP)"
-          if ! umount -c "${FSXPATH}"; then
+          if ! umount -c "$${FSXPATH}"; then
               logger "$LOG_MSG Error unmounting '$FSXPATH' at $(date)"
 
               logger "$LOG_MSG Retrying..."
