@@ -44,6 +44,12 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "500m"
+          # requests:
+          #   memory: "48Mi"
+          #   cpu: "30m"
+          # limits:
+          #   memory: "64Mi"
+          #   cpu: "60m"
 #NOTE: comment out `volumeMounts` section for configmap and\or secret guide
         # volumeMounts:
         # - name: secret-volume
@@ -54,13 +60,13 @@ spec:
           - mountPath: /test_lustre
             name: lustre-local-pv
             readOnly: true
-          # - mountPath: /test_s3
-          #   name: s3-local-pv
-          #   readOnly: true
-        command:
-          - "/bin/sh"
-          - "-c"
-          - while true; do cat /test_lustre/testfile-lustre11.txt > /dev/null; sleep 1; done
+          - mountPath: /test_s3
+            name: s3-local-pv
+            readOnly: true
+        # command:
+        #   - "/bin/sh"
+        #   - "-c"
+        #   - while true; do cat /test_lustre/testfile-lustre1.txt > /dev/null; sleep 1; done
 #NOTE: comment out `volumes` section for configmap and\or secret guide
       # volumes:
       # - name: secret-volume
@@ -73,13 +79,13 @@ spec:
         - name: lustre-local-pv
           persistentVolumeClaim:
             claimName: lustre-local-pvc
-        # - name: s3-local-pv
-        #   persistentVolumeClaim:
-        #     claimName: s3-local-pvc
+        - name: s3-local-pv
+          persistentVolumeClaim:
+            claimName: s3-local-pvc
       tolerations:
       # - key: "cattle.io/os"
       #   value: "linux"
       #   effect: "NoSchedule"
       - key: "spotInstance"
         value: "true"
-        effect: "NoSchedule"
+        effect: "PreferNoSchedule"
